@@ -1,57 +1,69 @@
-//variables
-const selection = ["rock","paper","scissors"];
-let computerChoice;
-let userChoice;
-let pScore = 0;
+const selections = ['rock', 'paper', 'scissors'];
+const roundResult = document.querySelector('.round-result')
+let npcSelection;
+let playerSelection;
 let cScore = 0;
-//computer choice
-const getComputerChoice = function() {
-  computerChoice = selection.at(Math.floor(Math.random() * selection.length));
-  return computerChoice;
+let pScore = 0;
+const playerScore = document.querySelector('.p-result')
+const computerScore = document.querySelector('.n-result')
+
+const getNpcSelection = function () {
+  let randomNumber = Math.floor(Math.random() * selections.length);
+  npcSelection = selections[randomNumber];
+  return npcSelection;
 }
-//user choice
-const getUserChoice = function() {
-  userChoice = prompt("Type Rock, Paper, or Scissors!").toLowerCase();
-  return userChoice;
+
+const selectionButtons = document.querySelectorAll('[data-selection]');
+  selectionButtons.forEach(selectionButton => {
+    selectionButton.addEventListener('click', e => {
+      const selectionName = selectionButton.dataset.selection;
+      playRound(selectionName);
+    })});
+
+const playRound = function (playerSelection) {
+  npcSelection = getNpcSelection();
+
+  switch (playerSelection + npcSelection) {
+  //player wins
+    case 'rockscissors' :
+    case 'paperrock' :
+    case 'scissorspaper' :
+      roundResult.innerText = `Computer chose ${npcSelection} YOU'VE WON this round! keep playing!`;
+      roundResult.style.color = 'green';
+      pScore += 1;
+      playerScore.innerText = `${pScore}`
+    break;
+  //computer wins
+    case 'scissorsrock' :
+    case 'rockpaper' :
+    case 'paperscissors' :
+      roundResult.innerText = `Computer chose ${npcSelection} YOU'VE LOST this round! keep playing!`
+      roundResult.style.color = 'red';
+      cScore += 1;
+      computerScore.innerText = `${cScore}`
+    break;
+  //Tie
+    case 'rockrock' : 
+    case 'scissorsscissors' :
+    case 'paperpaper' :
+      roundResult.innerText = `Computer chose ${npcSelection} IT'S A TIE! keep playing!`
+      roundResult.style.color = 'yellow';
+    break;
+  } winCondition();
 }
-//play a round
-const playRound = function (computerChoice, userChoice) {
-  computerChoice = getComputerChoice();
-  userChoice = getUserChoice();
-  if (userChoice !== "rock" && "paper" && "scissors") {
-    alert("You can only choose rock, paper, or scissors");
-  } else {
-      switch (computerChoice + userChoice) {
-        //computer win condition
-        case "rockscissors":
-        case "scissorspaper":
-        case "paperrock":
-          cScore++;
-          console.log(`YOU LOSE! Player Score: ${pScore} Computer Score: ${cScore}`)
-          break;
-        //user win condition
-        case "scissorsrock":
-        case "paperscissors":
-        case "rockpaper":
-          pScore++;
-          console.log(`YOU WIN! Player Score: ${pScore} Computer Score: ${cScore}`)
-          break;
-        case "rockrock":
-        case "scissorsscissors":
-        case "paperpaper":
-          console.log(`It's a Tie! Player Score: ${pScore} Computer Score: ${cScore}`)
-      }
-    }
+const resetGame = function () {
+  pScore = 0;
+  cScore = 0;
+  computerScore.innerText = '0'
+  playerScore.innerText = '0'
 }
-//Play the game
-const game = function() {
-  while (pScore + cScore < 5) {
-    playRound();
-  }
+
+const winCondition = function () {
+  if (pScore + cScore === 5) {
     if (pScore > cScore) {
-      console.log('Game over you WIN!!! Refresh page to play again')
+      resetGame();
+      roundResult.innerText = "Victory!! let's play again";
     } else {
-      console.log('Game over you Lose!! Refresh page to play again')
-    }
-}
-console.log(game());
+      resetGame();
+      roundResult.innerText = "Defeat!! let's play again";
+    }}};
